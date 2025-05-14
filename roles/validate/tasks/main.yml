@@ -1,0 +1,10 @@
+- name: Ensure sshd is running
+  service:
+    name: sshd
+    state: started
+    enabled: yes
+
+- name: Ping external server
+  shell: ping -c 3 8.8.8.8
+  register: ping_result
+  failed_when: "'0% packet loss' not in ping_result.stdout"
