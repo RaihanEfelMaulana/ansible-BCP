@@ -1,0 +1,5 @@
+- name: Backup essential system files and configs
+  hosts: prod_servers
+  become: yes
+  roles:
+    - backup
