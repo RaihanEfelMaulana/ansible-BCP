@@ -1,5 +1,18 @@
 - name: Backup essential system files and configs
   hosts: prod_servers
   become: yes
-  roles:
-    - backup
+  tasks:
+    - name: Archive /etc config directory
+      archive:
+        path: /etc
+        dest: "/var/backups/etc-{{ inventory_hostname }}.tar.gz"
+        format: gz
+
+    - name: Dump crontab
+      command: crontab -l
+      register: cronout
+
+    - name: Save crontab to file
+      copy:
+        content: "{{ cronout.stdout }}"
+        dest: "/var/backups/crontab-{{ inventory_hostname }}.txt"
