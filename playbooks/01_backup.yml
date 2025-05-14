@@ -1,6 +1,7 @@
+---
 - name: Backup essential system files and configs
   hosts: 192.168.30.17
-  become: yes
+  become: true
   tasks:
     - name: Archive /etc config directory
       archive:
