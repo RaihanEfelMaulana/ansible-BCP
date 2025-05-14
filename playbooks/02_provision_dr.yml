@@ -1,0 +1,4 @@
+- name: Provision DR VM or instance
+  hosts: localhost
+  roles:
+    - provision_dr
