@@ -15,8 +15,8 @@
     - name: Archive /etc using tar command
       ansible.builtin.command: >
         tar czf /backups/etc-backup-{{ inventory_hostname }}.tar.gz /etc
-      args:
-        warn: false
+      #args:
+      #  warn: false
 
     - name: Verify backup archive created
       ansible.builtin.stat:
