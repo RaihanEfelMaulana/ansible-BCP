@@ -1,0 +1,5 @@
+- name: Restore configs on DR servers
+  hosts: dr_servers
+  become: yes
+  roles:
+    - restore
