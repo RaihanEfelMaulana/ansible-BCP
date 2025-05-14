@@ -1,19 +1,29 @@
 ---
-- name: Backup essential system files and configs
-  hosts: 192.168.30.17
-  become: true
+- name: Backup /etc config using ansible-core modules only
+  hosts: all
+  become: yes
   tasks:
-    - name: Archive /etc config directory
-      archive:
-        path: /etc
-        dest: "/var/backups/etc-{{ inventory_hostname }}.tar.gz"
-        format: gz
 
-    - name: Dump crontab
-      command: crontab -l
-      register: cronout
+    - name: Ensure backup directory exists
+      ansible.builtin.file:
+        path: /backups
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
 
-    - name: Save crontab to file
-      copy:
-        content: "{{ cronout.stdout }}"
-        dest: "/var/backups/crontab-{{ inventory_hostname }}.txt"
+    - name: Archive /etc using tar command
+      ansible.builtin.command: >
+        tar czf /backups/etc-backup-{{ inventory_hostname }}.tar.gz /etc
+      args:
+        warn: false
+
+    - name: Verify backup archive created
+      ansible.builtin.stat:
+        path: /backups/etc-backup-{{ inventory_hostname }}.tar.gz
+      register: backup_file
+
+    - name: Fail if backup archive was not created
+      ansible.builtin.fail:
+        msg: "Backup archive was not created!"
+      when: not backup_file.stat.exists
