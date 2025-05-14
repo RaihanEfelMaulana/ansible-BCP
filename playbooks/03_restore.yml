@@ -1,5 +1,15 @@
+---
 - name: Restore configs on DR servers
-  hosts: dr_servers
+  hosts: all
   become: yes
-  roles:
-    - restore
+  tasks:
+    - name: Extract /etc backup
+      unarchive:
+        src: "/mnt/backups/etc-{{ inventory_hostname }}.tar.gz"
+        dest: /
+        remote_src: yes
+
+    - name: Restore crontab
+      cron:
+        name: "Recovered crontab"
+        job: "{{ lookup('file', '/mnt/backups/crontab-' + inventory_hostname + '.txt') }}"
