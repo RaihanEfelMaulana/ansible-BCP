@@ -1,5 +1,5 @@
 - name: Backup essential system files and configs
-  hosts: prod_servers
+  hosts: all
   become: yes
   tasks:
     - name: Archive /etc config directory
