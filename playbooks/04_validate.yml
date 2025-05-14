@@ -1,0 +1,5 @@
+- name: Validate system health and services
+  hosts: dr_servers
+  become: yes
+  roles:
+    - validate
