@@ -28,7 +28,7 @@
         mode: push
         rsync_opts:
           - "--rsync-path='sudo rsync'"
-      delegate_to: localhost  # synchronize runs locally, but connects from source to dest
+    #  delegate_to: localhost  # synchronize runs locally, but connects from source to dest
 
     - name: Transfer crontab backup to restore node
       synchronize:
@@ -38,4 +38,4 @@
         rsync_opts:
           - "--rsync-path='sudo rsync'"
       when: latest_crontab_backup.stdout is defined
-      delegate_to: localhost
+    #  delegate_to: localhost
