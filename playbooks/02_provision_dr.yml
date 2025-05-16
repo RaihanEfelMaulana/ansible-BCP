@@ -1,4 +1,35 @@
-- name: Provision DR VM or instance
-  hosts: localhost
-  roles:
-    - provision_dr
+- name: Transfer 2 latest backup files to restore node
+  hosts: backup
+  become: yes
+  tasks:
+    - name: Find latest etc backup file
+      shell: ls -1t /var/backups/etc-*.tar.gz | head -n1
+      register: latest_etc_backup
+      changed_when: false
+
+    - name: Find latest crontab backup file
+      shell: ls -1t /var/backups/crontab-*.txt | head -n1
+      register: latest_crontab_backup
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Ensure destination directory exists on restore
+      file:
+        path: /backup
+        state: directory
+        mode: '0755'
+      delegate_to: restore
+
+    - name: Copy latest etc backup to restore node
+      copy:
+        src: "{{ latest_etc_backup.stdout }}"
+        dest: "/backup/{{ latest_etc_backup.stdout | basename }}"
+      delegate_to: restore
+
+    - name: Copy latest crontab backup to restore node
+      copy:
+        src: "{{ latest_crontab_backup.stdout }}"
+        dest: "/backup/{{ latest_crontab_backup.stdout | basename }}"
+      when: latest_crontab_backup.stdout is defined
+      delegate_to: restore
+
