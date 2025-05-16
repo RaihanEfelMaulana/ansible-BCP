@@ -27,7 +27,18 @@
         dest: "/var/backups/crontab-{{ inventory_hostname }}-{{ backup_time }}.txt"
       when: cronout.stdout is defined
 
+    - name: Copy /etc backup file to restore node
+      copy:
+        src: "/var/backups/{{ backup_filename }}"
+        dest: "/tmp/{{ backup_filename }}"
+      delegate_to: restore
 
+    - name: Copy crontab backup to restore node
+      copy:
+        src: "/var/backups/{{ crontab_filename }}"
+        dest: "/tmp/{{ crontab_filename }}"
+      when: cronout.stdout is defined
+      delegate_to: restore
 
 #    - name: Ensure backup directory exists
 #      ansible.builtin.file:
