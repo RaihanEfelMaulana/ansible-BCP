@@ -18,18 +18,18 @@
         path: /backup
         state: directory
         mode: '0755'
-      delegate_to: restore
+      delegate_to: 192.168.51.21
 
     - name: Copy latest etc backup to restore node
       copy:
         src: "{{ latest_etc_backup.stdout }}"
         dest: "/backup/{{ latest_etc_backup.stdout | basename }}"
-      delegate_to: restore
+      delegate_to: 192.168.51.21
 
     - name: Copy latest crontab backup to restore node
       copy:
         src: "{{ latest_crontab_backup.stdout }}"
         dest: "/backup/{{ latest_crontab_backup.stdout | basename }}"
       when: latest_crontab_backup.stdout is defined
-      delegate_to: restore
+      delegate_to: 192.168.51.21
 
