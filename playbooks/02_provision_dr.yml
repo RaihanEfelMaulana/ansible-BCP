@@ -1,9 +1,8 @@
-- name: Transfer 2 latest backup files to restore node
+- name: Transfer backup files from backup node to restore node
   hosts: backup
   become: yes
   vars:
     restore_ip: 192.168.51.21
-    restore_user: babonza  # ganti sesuai user restore
   tasks:
     - name: Find latest etc backup file
       shell: ls -1t /var/backups/etc-*.tar.gz | head -n1
@@ -16,26 +15,29 @@
       changed_when: false
       ignore_errors: yes
 
-    - name: Ensure destination directory exists on restore
+    - name: Ensure /backup directory exists on restore node
       ansible.builtin.shell: "mkdir -p /backup && chmod 755 /backup"
       delegate_to: "{{ restore_ip }}"
       become: yes
 
-    - name: Transfer etc backup to restore node
+    - name: Transfer latest etc backup to restore node
       synchronize:
         src: "{{ latest_etc_backup.stdout }}"
         dest: "/backup/"
         mode: push
         rsync_opts:
           - "--rsync-path='sudo rsync'"
-      delegate_to: localhost  # synchronize runs locally, but connects from source to dest
+        dest_user: babonza     # username di restore node, sesuaikan ya
+        dest_host: "{{ restore_ip }}"
 
-    - name: Transfer crontab backup to restore node
+    - name: Transfer latest crontab backup to restore node
       synchronize:
         src: "{{ latest_crontab_backup.stdout }}"
         dest: "/backup/"
         mode: push
         rsync_opts:
           - "--rsync-path='sudo rsync'"
+        dest_user: babonza
+        dest_host: "{{ restore_ip }}"
       when: latest_crontab_backup.stdout is defined
-      delegate_to: localhost
+
