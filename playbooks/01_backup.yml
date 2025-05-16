@@ -1,22 +1,32 @@
----
-- name: Backup /etc config using ansible-core modules only
+- name: Backup /etc config using tar with timestamp
   hosts: all
   become: yes
+  vars:
+    backup_time: "{{ ansible_date_time.iso8601_basic_short }}"  # contoh: 20250516T153021
   tasks:
-    - name: Archive /etc config directory
-      archive:
-        path: /etc
-        dest: "/var/backups/etc-{{ inventory_hostname }}.tar.gz"
-        format: gz
+    - name: Ensure backup directory exists
+      file:
+        path: /var/backups
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
 
-    - name: Dump crontab
+    - name: Archive /etc using tar with timestamp
+      command: >
+        tar czf /var/backups/etc-{{ inventory_hostname }}-{{ backup_time }}.tar.gz /etc
+
+    - name: Dump root crontab
       command: crontab -l
       register: cronout
+      ignore_errors: yes  # Kalau tidak ada crontab, tetap lanjut
 
     - name: Save crontab to file
       copy:
         content: "{{ cronout.stdout }}"
-        dest: "/var/backups/crontab-{{ inventory_hostname }}.txt"
+        dest: "/var/backups/crontab-{{ inventory_hostname }}-{{ backup_time }}.txt"
+      when: cronout.stdout is defined
+
 
 
 #    - name: Ensure backup directory exists
