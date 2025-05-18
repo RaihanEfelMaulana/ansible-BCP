@@ -1,4 +1,4 @@
-- name: Restore konfigurasi dari backup terbaru
+- name: Restore configuration from latest backup
   hosts: restore
   become: true
   vars:
@@ -6,33 +6,33 @@
     ip_source: "192.168.30.17"
 
   tasks:
-    - name: Cari file .tar.gz terbaru
+    - name: Find the latest .tar.gz file
       ansible.builtin.shell: |
         ls -1 {{ backup_dir }}/etc-{{ ip_source }}-*.tar.gz | sort | tail -n1
       register: latest_tar
       changed_when: false
 
-    - name: Cari file crontab terbaru
+    - name: Find the latest crontab file
       ansible.builtin.shell: |
         ls -1 {{ backup_dir }}/crontab-{{ ip_source }}-*.txt | sort | tail -n1
       register: latest_crontab
       changed_when: false
 
-    - name: Debug - File .tar.gz yang dipilih
+    - name: Debug - Selected .tar.gz file
       debug:
         var: latest_tar.stdout
 
-    - name: Debug - File crontab yang dipilih
+    - name: Debug - Selected crontab file
       debug:
         var: latest_crontab.stdout
 
-    - name: Ekstrak /etc dari backup terbaru
+    - name: Extract /etc from latest backup
       ansible.builtin.unarchive:
         src: "{{ latest_tar.stdout }}"
         dest: /
         remote_src: yes
 
-    - name: Restore crontab dari backup terbaru
+    - name: Restore crontab from latest backup
       ansible.builtin.shell: |
         crontab {{ latest_crontab.stdout }}
       args:
