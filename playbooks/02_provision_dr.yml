@@ -1,22 +1,16 @@
 ---
-- name: Transfer file dari VM 1 ke VM 2 menggunakan rsync
-  hosts: 192.168.30.17
+- name: Direct transfer from VM Backup to VM Restore
+  hosts: backup
   gather_facts: no
-
-  vars:
-    source_dir: /var/backups/
-    dest_user: root
-    dest_host: 192.168.51.21
-    dest_path: /home/babonza/restore/
-
   tasks:
-    - name: Jalankan rsync dari VM 1 ke VM 2
-      shell: >
-        rsync -avz -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" {{ source_dir }} {{ dest_user }}@{{ dest_host }}:{{ dest_path }}
-      args:
-        warn: false
-      register: rsync_result
-
-    - name: Tampilkan hasil rsync
-      ansible.builtin.debug:
-        var: rsync_result.stdout_lines
+    - name: Synchronize /var/backup to VM Restore:/restore
+      ansible.posix.synchronize:
+        src: /var/backup/
+        dest: /restore/
+        mode: push
+      delegate_to: localhost
+      vars:
+        ansible_ssh_user: babonza
+        ansible_ssh_pass: P@ssw0rd
+        ansible_host: 192.168.51.21
+        rsync_path: "sudo rsync"
