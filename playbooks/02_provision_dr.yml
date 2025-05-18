@@ -1,6 +1,6 @@
 ---
 - name: Synchronize /var/backup to VM Restore:/restore
-  hosts: vm_backup
+  hosts: backup
   gather_facts: no
   tasks:
     - name: Sync backup files to VM Restore
