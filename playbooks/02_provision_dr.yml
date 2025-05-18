@@ -8,5 +8,5 @@
         src: /var/backup/
         dest: /restore/
         mode: push
-        dest_host: 192.168.1.20
+        dest_host: 192.168.51.21
       delegate_to: localhost
