@@ -1,12 +1,11 @@
----
-- name: Synchronize /var/backup to VM Restore:/restore
+- name: Sync backup files to VM Restore
   hosts: backup
-  gather_facts: no
+  become: true
   tasks:
-    - name: Sync backup files to VM Restore
+    - name: Rsync to VM Restore
       ansible.posix.synchronize:
         src: /var/backup/
-        dest: /restore/
+        dest: babonza@192.168.30.18:/restore/
         mode: push
-        dest_host: 192.168.51.21
-      delegate_to: localhost
+        rsync_opts:
+          - "--rsh=ssh -o StrictHostKeyChecking=no"
