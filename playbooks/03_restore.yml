@@ -1,15 +1,39 @@
----
-- name: Restore configs on DR servers
-  hosts: all
-  become: yes
+- name: Restore konfigurasi dari backup terbaru
+  hosts: restore
+  become: true
+  vars:
+    backup_dir: "/home/babonza/restore"
+    ip_source: "192.168.30.17"
+
   tasks:
-    - name: Extract /etc backup
-      unarchive:
-        src: "/mnt/backups/etc-{{ inventory_hostname }}.tar.gz"
+    - name: Cari file .tar.gz terbaru
+      ansible.builtin.shell: |
+        ls -1 {{ backup_dir }}/etc-{{ ip_source }}-*.tar.gz | sort | tail -n1
+      register: latest_tar
+      changed_when: false
+
+    - name: Cari file crontab terbaru
+      ansible.builtin.shell: |
+        ls -1 {{ backup_dir }}/crontab-{{ ip_source }}-*.txt | sort | tail -n1
+      register: latest_crontab
+      changed_when: false
+
+    - name: Debug - File .tar.gz yang dipilih
+      debug:
+        var: latest_tar.stdout
+
+    - name: Debug - File crontab yang dipilih
+      debug:
+        var: latest_crontab.stdout
+
+    - name: Ekstrak /etc dari backup terbaru
+      ansible.builtin.unarchive:
+        src: "{{ latest_tar.stdout }}"
         dest: /
         remote_src: yes
 
-    - name: Restore crontab
-      cron:
-        name: "Recovered crontab"
-        job: "{{ lookup('file', '/mnt/backups/crontab-' + inventory_hostname + '.txt') }}"
+    - name: Restore crontab dari backup terbaru
+      ansible.builtin.shell: |
+        crontab {{ latest_crontab.stdout }}
+      args:
+        executable: /bin/bash
