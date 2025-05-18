@@ -23,7 +23,7 @@
 
     - name: Save crontab to file
       copy:
-        content: "{{ cronout.stdout }}"
+        content: "{{ cronout.stdout | default('') }}\n"
         dest: "/var/backups/crontab-{{ inventory_hostname }}-{{ backup_time }}.txt"
       when: cronout.stdout is defined
 
