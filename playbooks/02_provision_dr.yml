@@ -1,16 +1,12 @@
 ---
-- name: Direct transfer from VM Backup to VM Restore
-  hosts: backup
+- name: Synchronize /var/backup to VM Restore:/restore
+  hosts: vm_backup
   gather_facts: no
   tasks:
-    - name: Synchronize /var/backup to VM Restore:/restore
+    - name: Sync backup files to VM Restore
       ansible.posix.synchronize:
         src: /var/backup/
         dest: /restore/
         mode: push
+        dest_host: 192.168.1.20
       delegate_to: localhost
-      vars:
-        ansible_ssh_user: babonza
-        ansible_ssh_pass: P@ssw0rd
-        ansible_host: 192.168.51.21
-        rsync_path: "sudo rsync"
