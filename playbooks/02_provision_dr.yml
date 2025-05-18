@@ -5,7 +5,7 @@
 
   vars:
     source_dir: /var/backups/
-    dest_user: babonza
+    dest_user: root
     dest_host: 192.168.51.21
     dest_path: /home/babonza/restore/
 
