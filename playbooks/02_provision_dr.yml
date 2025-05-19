@@ -12,7 +12,6 @@
 
   tasks:
     - name: Jalankan rsync dari VM 1 ke VM 2
-      ansible.builtin.shell: |
         rsync -avz -e "ssh -o StrictHostKeyChecking=no" /var/backups/ babonza@192.168.51.21:restore/
       register: rsync_result
 
