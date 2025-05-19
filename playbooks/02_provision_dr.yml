@@ -4,7 +4,7 @@
   tasks:
     - name: Rsync to VM Restore
       ansible.posix.synchronize:
-        src: /var/backup/
+        src: /var/backups/
         dest: babonza@192.168.30.18:/restore/
         mode: push
         rsync_opts:
