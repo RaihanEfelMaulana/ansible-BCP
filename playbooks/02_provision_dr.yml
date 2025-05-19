@@ -5,7 +5,7 @@
     - name: Rsync to VM Restore
       ansible.posix.synchronize:
         src: /var/backups/
-        dest: babonza@192.168.30.18:/restore/
+        dest: babonza@192.168.30.18:restore/
         mode: push
         rsync_opts:
           - "--rsh=ssh -o StrictHostKeyChecking=no"
