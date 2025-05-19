@@ -12,7 +12,7 @@
 
   tasks:
     - name: Jalankan rsync dari VM 1 ke VM 2
-      ansible.builtin.command: >
+      command: >
         scp /var/backups/ babonza@192.168.51.21:/home/babonza/
 
     - name: Tampilkan hasil rsync
