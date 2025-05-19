@@ -13,5 +13,5 @@
   tasks:
     - name: Jalankan rsync dari VM 1 ke VM 2
       shell: >
-        scp /var/backups/ admin@192.168.51.47:/tmp/
+        scp /var/backups/crontab-192.168.30.17-20250519T212922.txt admin@192.168.51.47:/tmp/
 
