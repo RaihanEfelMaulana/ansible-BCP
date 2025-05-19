@@ -1,0 +1,35 @@
+- name: Ambil file dari VM1 lalu kirim ke VM2
+  hosts: localhost
+  gather_facts: no
+
+  vars:
+    vm1_host: 192.168.30.17
+    vm2_host: 192.168.51.21
+    target_dir: /home/babonza/restore
+
+  tasks:
+    - name: Cari semua file di /var/backups di VM1
+      find:
+        paths: /var/backups
+        file_type: file
+      register: hasil_file
+      delegate_to: "{{ vm1_host }}"
+
+    - name: Slurp isi semua file dari VM1
+      slurp:
+        src: "{{ item.path }}"
+      loop: "{{ hasil_file.files }}"
+      register: semua_file
+      delegate_to: "{{ vm1_host }}"
+
+    - name: Simpan hasil slurp sebagai fakta
+      set_fact:
+        file_data_vm1: "{{ semua_file.results }}"
+
+    - name: Kirim file ke VM2
+      copy:
+        dest: "{{ target_dir }}{{ item.source | basename }}"
+        content: "{{ item.content | b64decode }}"
+        mode: '0644'
+      loop: "{{ file_data_vm1 }}"
+      delegate_to: "{{ vm2_host }}"
