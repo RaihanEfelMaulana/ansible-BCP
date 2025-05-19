@@ -1,6 +1,6 @@
 ---
 - name: Transfer file backup dari VM 1 ke VM 2
-  hosts: 192.168.30.17
+  hosts: 192.168.51.21
   become: true
   gather_facts: no
 
@@ -13,5 +13,5 @@
   tasks:
     - name: Jalankan rsync dari VM 1 ke VM 2 test
       shell: >
-        cp /home/babonza/crontab-192.168.30.17-20250519T224528.txt /home/babonza/Documents/
+        scp /home/babonza/crontab-192.168.30.17-20250519T224528.txt admin@192.168.51.47:/home/admin/
 
