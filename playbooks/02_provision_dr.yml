@@ -1,14 +1,20 @@
 ---
-- name: Run rsync backup to remote server
-  hosts: backup   # atau ganti dengan host yang sesuai
-  become: yes        # kalau perlu hak akses root
+- name: Transfer file backup dari VM 1 ke VM 2
+  hosts: backup
+  gather_facts: no
+
+  vars:
+    source_dir: /var/backups/
+    dest_user: babonza
+    dest_host: 192.168.51.21
+    dest_path: /home/babonza/restore/
 
   tasks:
-    - name: Run rsync to remote restore server
-      shell: rsync -avz -e "ssh -o StrictHostKeyChecking=no" /var/backups/ babonza@192.168.51.21:restore/
+    - name: Jalankan rsync dari VM 1 ke VM 2
+      ansible.builtin.shell: |
+        rsync -avz {{ source_dir }} {{ dest_user }}@{{ dest_host }}:{{ dest_path }}
       register: rsync_result
-      ignore_errors: yes
 
-    - name: Show rsync output
-      debug:
+    - name: Tampilkan hasil rsync
+      ansible.builtin.debug:
         var: rsync_result.stdout_lines
