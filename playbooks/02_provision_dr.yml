@@ -1,11 +1,14 @@
-- name: Sync backup files to VM Restore
-  hosts: backup
-  become: true
+---
+- name: Run rsync backup to remote server
+  hosts: backup   # atau ganti dengan host yang sesuai
+  become: yes        # kalau perlu hak akses root
+
   tasks:
-    - name: Rsync to VM Restore
-      ansible.posix.synchronize:
-        src: /var/backups/
-        dest: babonza@192.168.30.18:restore/
-        mode: push
-        rsync_opts:
-          - "--rsh=ssh -o StrictHostKeyChecking=no"
+    - name: Run rsync to remote restore server
+      shell: rsync -avz -e "ssh -o StrictHostKeyChecking=no" /var/backups/ babonza@192.168.51.21:restore/
+      register: rsync_result
+      ignore_errors: yes
+
+    - name: Show rsync output
+      debug:
+        var: rsync_result.stdout_lines
