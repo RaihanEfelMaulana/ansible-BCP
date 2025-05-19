@@ -4,16 +4,16 @@
   become: true
   gather_facts: no
 
-  vars:
-    source_dir: /var/backups/
-    dest_user: babonza
-    dest_host: 192.168.51.21
-    dest_path: restore/
+  #vars:
+  #  source_dir: /var/backups/
+  #  dest_user: babonza
+  #  dest_host: 192.168.51.21
+  #  dest_path: restore/
 
   tasks:
     - name: Jalankan rsync dari VM 1 ke VM 2
       ansible.builtin.shell: |
-        sudo rsync -avz -e "ssh -o StrictHostKeyChecking=no" {{ source_dir }} {{ dest_user }}@{{ dest_host }}:{{ dest_path }}
+        rsync -avz -e "ssh -o StrictHostKeyChecking=no" /var/backups/ babonza@192.168.51.21:restore/
       register: rsync_result
 
     - name: Tampilkan hasil rsync
