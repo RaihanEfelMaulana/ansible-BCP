@@ -1,6 +1,7 @@
 ---
 - name: Transfer file backup dari VM 1 ke VM 2
   hosts: backup
+  become: true
   gather_facts: no
 
   vars:
@@ -12,7 +13,7 @@
   tasks:
     - name: Jalankan rsync dari VM 1 ke VM 2
       ansible.builtin.shell: |
-        sudo rsync -avz {{ source_dir }} {{ dest_user }}@{{ dest_host }}:{{ dest_path }}
+        rsync -avz {{ source_dir }} {{ dest_user }}@{{ dest_host }}:{{ dest_path }}
       register: rsync_result
 
     - name: Tampilkan hasil rsync
