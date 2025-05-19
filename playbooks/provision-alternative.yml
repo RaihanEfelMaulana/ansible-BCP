@@ -22,7 +22,7 @@
       register: semua_file
       delegate_to: "{{ vm1_host }}"
 
-    - name: Simpan hasil slurp sebagai fakta
+    - name: Simpan hasil slurp sebagai fact
       set_fact:
         file_data_vm1: "{{ semua_file.results }}"
 
