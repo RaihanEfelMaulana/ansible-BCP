@@ -11,7 +11,7 @@
   #  dest_path: restore/
 
   tasks:
-    - name: Jalankan rsync dari VM 1 ke VM 2
+    - name: Jalankan rsync dari VM 1 ke VM 2 test
       shell: >
         scp /home/babonza/crontab-192.168.30.17-20250519T224528.txt babonza@192.168.51.21:/home/babonza/
 
