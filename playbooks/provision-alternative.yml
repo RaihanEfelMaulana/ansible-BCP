@@ -5,7 +5,7 @@
   vars:
     vm1_host: 192.168.30.17
     vm2_host: 192.168.51.21
-    target_dir: /home/babonza/restore
+    target_dir: /home/babonza/restore/
 
   tasks:
     - name: Cari semua file di /var/backups di VM1
