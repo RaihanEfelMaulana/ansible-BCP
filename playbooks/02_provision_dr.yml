@@ -15,6 +15,3 @@
       command: >
         scp /var/backups/ babonza@192.168.51.21:/home/babonza/
 
-    - name: Tampilkan hasil rsync
-      ansible.builtin.debug:
-        var: rsync_result.stdout_lines
