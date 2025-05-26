@@ -1,17 +1,18 @@
 ---
-- name: Transfer file backup dari VM 1 ke VM 2
-  hosts: 192.168.51.21
+- name: Push /var/backups from 192.168.30.17 to 192.168.51.21:/restore
+  hosts: backup
   become: true
-  gather_facts: no
-
-  #vars:
-  #  source_dir: /var/backups/
-  #  dest_user: babonza
-  #  dest_host: 192.168.51.21
-  #  dest_path: restore/
-
+  vars:
+    dest_host: "192.168.51.21"
+    source_path: "/var/backups/"
+    dest_path: "/restore/"
+    source_host: "192.168.30.17"
   tasks:
-    - name: Jalankan rsync dari VM 1 ke VM 2 test
-      shell: >
-        scp /home/babonza/crontab-192.168.30.17-20250519T224528.txt admin@192.168.51.47:/home/admin/
-
+    - name: Rsync push to destination host
+      ansible.posix.synchronize:
+        src: "{{ source_path }}"
+        dest: "{{ dest_host }}:{{ dest_path }}"
+        mode: pull
+        rsync_path: "rsync"
+        archive: true
+      delegate_to: "{{ source_host }}"
